@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Algo Trading Demo</title>
+    <style>
+      :root { color-scheme: light; }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #0b1220; color: #e9eefb; }
+      .wrap { max-width: 840px; margin: 0 auto; padding: 40px 20px; }
+      .card { background: #111a2e; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+      h1 { margin: 0 0 8px; font-size: 22px; }
+      p { margin: 8px 0; color: rgba(233,238,251,0.85); }
+      form { display: flex; gap: 10px; margin-top: 16px; }
+      input[type="text"] { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: #0b1220; color: #e9eefb; outline: none; }
+      button { padding: 12px 14px; border-radius: 10px; border: 0; background: #4f7cff; color: white; font-weight: 600; cursor: pointer; }
+      .result { margin-top: 18px; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.04); }
+      .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; letter-spacing: 0.4px; }
+      .buy { background: rgba(50, 215, 75, 0.18); border: 1px solid rgba(50, 215, 75, 0.35); color: #87f59a; }
+      .dont { background: rgba(255, 69, 58, 0.14); border: 1px solid rgba(255, 69, 58, 0.30); color: #ff9b95; }
+      .err { background: rgba(255, 159, 10, 0.14); border: 1px solid rgba(255, 159, 10, 0.30); color: #ffd08a; }
+      .meta { margin-top: 8px; font-size: 13px; color: rgba(233,238,251,0.72); }
+      code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>Algo Trading Demo</h1>
+        <p>Enter a stock ticker. The app trains a quick RL agent and returns the final action as a simple Buy / Don’t buy signal.</p>
+
+        <form method="post" action="/predict">
+          <input name="ticker" type="text" placeholder="e.g. NVDA, AAPL, TSLA" autocomplete="off" />
+          <button type="submit">Get signal</button>
+        </form>
+
+        {% if result %}
+          <div class="result">
+            {% if result.error %}
+              <div class="badge err">ERROR</div>
+              <div class="meta" style="margin-top:10px;">{{ result.error }}</div>
+            {% else %}
+              <div>
+                {% if result.action == "BUY" %}
+                  <span class="badge buy">BUY</span>
+                {% else %}
+                  <span class="badge dont">DON'T BUY</span>
+                {% endif %}
+                <span style="margin-left:10px; font-weight:700;">{{ result.ticker }}</span>
+              </div>
+              <div class="meta">Data source: <code>{{ result.used_data }}</code></div>
+              <div class="meta">{{ result.note }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <p class="meta">Run locally with <code>uv run python app.py</code> (or <code>.venv/bin/python app.py</code>).</p>
+      </div>
+    </div>
+  </body>
+</html>
+
