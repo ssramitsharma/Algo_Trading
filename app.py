@@ -7,7 +7,7 @@ from typing import Optional
 
 from flask import Flask, render_template, request
 
-from algo_trading import get_price_data, make_env
+from algo_trading import DataFetchError, get_price_data, make_env
 
 from stable_baselines3 import DQN
 
@@ -17,7 +17,6 @@ class Recommendation:
     ticker: str
     action: str  # "BUY" or "DON'T BUY"
     confidence_note: str
-    used_data: str
 
 
 app = Flask(__name__)
@@ -52,7 +51,6 @@ def _train_or_get_model(ticker: str, timesteps: int = 3000) -> DQN:
 def recommend(ticker: str) -> Recommendation:
     ticker = ticker.strip().upper()
     df = get_price_data(ticker=ticker)
-    used_data = "yfinance" if getattr(df, "empty", True) is False else "synthetic"
 
     env = make_env(df)
     model = _train_or_get_model(ticker)
@@ -72,17 +70,11 @@ def recommend(ticker: str) -> Recommendation:
     note = (
         "Model is trained quickly on recent history; treat as a demo signal, not financial advice."
     )
-    if used_data != "yfinance":
-        note = (
-            "Yahoo data download is blocked in this environment, so this used synthetic data. "
-            "Fix data access to get meaningful recommendations."
-        )
 
     return Recommendation(
         ticker=ticker,
         action=action_text,
         confidence_note=note,
-        used_data=used_data,
     )
 
 
@@ -110,7 +102,13 @@ def predict():
                 "ticker": rec.ticker,
                 "action": rec.action,
                 "note": rec.confidence_note,
-                "used_data": rec.used_data,
+            },
+        )
+    except DataFetchError as e:
+        return render_template(
+            "index.html",
+            result={
+                "error": str(e),
             },
         )
     except Exception as e:

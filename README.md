@@ -5,6 +5,7 @@ Small algo-trading demo using `gym-anytrading` + `stable-baselines3` (DQN), pack
 ## What’s in here
 
 - **`algo_trading.py`**: downloads (or synthesizes) OHLCV data, trains a DQN agent, evaluates it, and saves a plot to `trades.png`.
+- **`algo_trading.py`**: downloads OHLCV data, trains a DQN agent, evaluates it, and saves a plot to `trades.png`.
 - **`app.py`** + **`templates/index.html`**: a local web UI (desktop-style) where you enter a ticker and get a recommendation.
 - **`pyproject.toml` / `uv.lock`**: dependency management via `uv`.
 
@@ -49,7 +50,7 @@ Enter a ticker (e.g. `NVDA`, `AAPL`, `TSLA`) and submit to get a **BUY / DON'T B
 
 ## Notes / gotchas
 
-- **Yahoo / `yfinance` access**: if your network blocks Yahoo (common in some environments), `yfinance` downloads can fail (e.g. 403). In that case the project automatically falls back to **deterministic synthetic OHLCV data** so the pipeline still runs end-to-end. The Flask UI will tell you when synthetic data was used.
+- **Yahoo / `yfinance` access**: if your network blocks Yahoo (common in some environments), `yfinance` downloads can fail (e.g. 403). In that case this project **will not fabricate data**—it will **show an error** telling you the data could not be fetched.
 - **Plotting**: in non-GUI environments the code uses a non-interactive Matplotlib backend and saves images instead of calling `plt.show()`.
 
 ## Add / update dependencies
