@@ -1,0 +1,13 @@
+[project]
+name = "algo-trading"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "gym-anytrading>=2.0.0",
+    "gymnasium>=1.2.3",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.8",
+    "shimmy>=2.0.0",
+    "stable-baselines3>=2.8.0",
+    "yfinance>=1.2.0",
+]
